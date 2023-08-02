@@ -35,7 +35,7 @@ async function run() {
 
     //see all the data from database
     app.get('/alltoys',async(req,res)=>{
-        const result = await toyCollection.find().toArray();
+        const result = await toyCollection.find().limit(20).toArray();
         res.send(result)
     })
     //see individual data from database
@@ -70,6 +70,13 @@ async function run() {
     })
 
     //delete specific single data 
+    app.delete('/delete/:id',async(req,res)=>{
+        const id = req.params.id;
+        console.log('delete this id',id);
+        const query = {_id:  new ObjectId(id)};
+        const result = await toyCollection.deleteOne(query);
+        res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
