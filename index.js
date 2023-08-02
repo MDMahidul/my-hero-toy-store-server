@@ -34,49 +34,71 @@ async function run() {
     });
 
     //see all the data from database
-    app.get('/alltoys',async(req,res)=>{
-        const result = await toyCollection.find().limit(20).toArray();
-        res.send(result)
-    })
+    app.get("/alltoys", async (req, res) => {
+      const result = await toyCollection.find().limit(20).toArray();
+      res.send(result);
+    });
     //see individual data from database
-    app.get('/details/:id',async(req,res)=>{
-        const id = req.params.id;
-        const filter = {_id:new ObjectId(id)};
-        const result = await toyCollection.findOne(filter);
-        res.send(result)
-    })
+    app.get("/details/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await toyCollection.findOne(filter);
+      res.send(result);
+    });
 
     //get specific user data
-    app.get('/mytoys/:email',async(req,res)=>{
-        const filter = req.params.email;
-        const result = await toyCollection.find({sellerEmail: filter}).toArray();
-        res.send(result);
-    })
+    app.get("/mytoys/:email", async (req, res) => {
+      const filter = req.params.email;
+      const result = await toyCollection
+        .find({ sellerEmail: filter })
+        .toArray();
+      res.send(result);
+    });
+
+    //show my toy data in ascending order by price
+    app.get("/ascending/:email", async (req, res) => {
+      const filter = req.params.email;
+      const result = await toyCollection
+        .find({ sellerEmail: filter })
+        .sort({ price: 1 })
+        .toArray();
+      res.send(result);
+    });
+
+    //show my toy data in descending order by price
+    app.get("/descending/:email", async (req, res) => {
+      const filter = req.params.email;
+      const result = await toyCollection
+        .find({ sellerEmail: filter })
+        .sort({ price: -1 })
+        .toArray();
+      res.send(result);
+    });
 
     //update data
-    app.put('/update/:id',async(req,res)=>{
-        const id =req.params.id;
-        const bodyData= req.body;
-        const filter = {_id: new ObjectId(id)};
-        const updateData = {
-            $set:{
-                price: bodyData.price,
-                quantity: bodyData.quantity,
-                description: bodyData.description
-            }
-        }
-        const result = await toyCollection.updateOne(filter, updateData);
-        res.send(result);
-    })
+    app.put("/update/:id", async (req, res) => {
+      const id = req.params.id;
+      const bodyData = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateData = {
+        $set: {
+          price: bodyData.price,
+          quantity: bodyData.quantity,
+          description: bodyData.description,
+        },
+      };
+      const result = await toyCollection.updateOne(filter, updateData);
+      res.send(result);
+    });
 
-    //delete specific single data 
-    app.delete('/delete/:id',async(req,res)=>{
-        const id = req.params.id;
-        console.log('delete this id',id);
-        const query = {_id:  new ObjectId(id)};
-        const result = await toyCollection.deleteOne(query);
-        res.send(result);
-    })
+    //delete specific single data
+    app.delete("/delete/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("delete this id", id);
+      const query = { _id: new ObjectId(id) };
+      const result = await toyCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
