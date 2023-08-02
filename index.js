@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 app.use(express.json());
@@ -25,13 +25,26 @@ async function run() {
     await client.connect();
     const toyCollection = client.db("myHero").collection("toys");
 
-    //add data to databse collection
+    //upload data to databse collection
     app.post("/upload", async (req, res) => {
       const data = req.body;
       console.log(data);
       const result = await toyCollection.insertOne(data);
       res.send(result);
     });
+
+    //see all the data from database
+    app.get('/alltoys',async(req,res)=>{
+        const result = await toyCollection.find().toArray();
+        res.send(result)
+    })
+    //see individual data from database
+    app.get('/details/:id',async(req,res)=>{
+        const id = req.params.id;
+        const filter = {_id:new ObjectId(id)};
+        const result = await toyCollection.findOne(filter);
+        res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
