@@ -46,6 +46,31 @@ async function run() {
         res.send(result)
     })
 
+    //get specific user data
+    app.get('/mytoys/:email',async(req,res)=>{
+        const filter = req.params.email;
+        const result = await toyCollection.find({sellerEmail: filter}).toArray();
+        res.send(result);
+    })
+
+    //update data
+    app.put('/update/:id',async(req,res)=>{
+        const id =req.params.id;
+        const bodyData= req.body;
+        const filter = {_id: new ObjectId(id)};
+        const updateData = {
+            $set:{
+                price: bodyData.price,
+                quantity: bodyData.quantity,
+                description: bodyData.description
+            }
+        }
+        const result = await toyCollection.updateOne(filter, updateData);
+        res.send(result);
+    })
+
+    //delete specific single data 
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
