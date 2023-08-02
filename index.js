@@ -19,14 +19,19 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const toyCollection = client.db("myHero").collection("toys");
 
-    
+    //add data to databse collection
+    app.post("/upload", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+      const result = await toyCollection.insertOne(data);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
