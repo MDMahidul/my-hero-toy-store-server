@@ -100,6 +100,23 @@ async function run() {
       res.send(result);
     });
 
+    //create index for one filed
+    const indexKey = { toyName: 1 };
+    //add index name
+    const indexOption = { name: "toyName_1" };
+    const result = await toyCollection.createIndex(indexKey, indexOption);
+
+    // for search field data
+    app.get("/byname/:text", async (req, res) => {
+        const fieldText = req.params.text;
+        const query = {
+            $or: [{ toyName: { $regex: new RegExp(fieldText, "i") } }],
+        };
+        const result = await toyCollection.find(query).toArray();
+        res.send(result);
+    });
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
