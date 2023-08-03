@@ -100,6 +100,17 @@ async function run() {
       res.send(result);
     });
 
+    //get data by category
+    app.get('/toys/:text',async(req,res)=>{ 
+        if (req.params.text == "dc" || req.params.text == "marvel" || req.params.text == "ben-ten") {
+          const result = await toyCollection
+            .find({ category: req.params.text })
+            .limit(6)
+            .toArray();
+          res.send(result);
+        }
+    })
+
     //create index for one filed
     const indexKey = { toyName: 1 };
     //add index name
